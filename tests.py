@@ -1,5 +1,5 @@
 import unittest
-from algebraic_statistic import Mean
+from algebraic_statistic import Mean, Variance
 import random
 
 class AbstractAlgebraicStatisticTest(unittest.TestCase):
@@ -79,6 +79,14 @@ class MeanTest(GroupStatisticTest):
         true_mean = 1.0 * sum(dataset) / len(dataset)
         self.assertEqual(true_mean, m.get_mean())
         self.assertEqual(len(dataset), m.get_n())
+
+class VarianceTest(AbstractAlgebraicStatisticTest):
+    STATISTIC_CLS = Variance
+    def _generate_data_set(self, size):
+        return [random.randint(-1000, 1000) for i in range(size)]
+
+    def _assert_equal(self, s1, s2):
+        self.assertAlmostEqual(s1.get_variance(), s2.get_variance(), places=6)
 
 if __name__ == '__main__':
     unittest.main()
