@@ -17,7 +17,7 @@ class AbstractAlgebraicStatisticTest(unittest.TestCase):
     def _assert_equal(self, s1, s2):
         raise NotImplementedError
 
-    def test_mean_merge_correctness(self):
+    def test_merge_correctness(self):
         d1, d2 = self._generate_data_sets([3, 4])
         merged_dataset = d1 + d2
         merged_dataset_m = self.STATISTIC_CLS(merged_dataset)
@@ -25,7 +25,7 @@ class AbstractAlgebraicStatisticTest(unittest.TestCase):
         merged_algebraic_m = m1 | m2
         self._assert_equal(merged_algebraic_m, merged_dataset_m)
 
-    def test_mean_eq(self):
+    def test_equality(self):
         d1, d2 = self._generate_data_sets([3, 4])
         self.assertTrue(self.STATISTIC_CLS(d1) == self.STATISTIC_CLS(d1))
         self.assertFalse(self.STATISTIC_CLS(d1) == self.STATISTIC_CLS(d2))
@@ -73,7 +73,7 @@ class MeanTest(GroupStatisticTest):
         self.assertAlmostEqual(s1.get_mean(), s2.get_mean(), places=6)
         self.assertEqual(s1.get_n(), s2.get_n())
 
-    def test_statistic_calculation_correctness(self):
+    def test_against_gold(self):
         dataset = self._generate_data_set(7)
         m = self.STATISTIC_CLS(dataset)
         true_mean = 1.0 * sum(dataset) / len(dataset)
