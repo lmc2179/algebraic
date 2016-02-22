@@ -3,6 +3,8 @@ This module shows how the sample average can be formulated as an algebraic stati
 "merge" operation ("|") and an inverse.
 """
 
+import copy
+
 class AbstractAlgebraicStatistic(object):
     def __init__(self, data=None):
         """
@@ -17,9 +19,10 @@ class AbstractAlgebraicStatistic(object):
         raise NotImplementedError
 
 class AbstractMonoidStatistic(AbstractAlgebraicStatistic):
-    @staticmethod
-    def get_identity():
-        raise NotImplementedError
+    @classmethod
+    def get_identity(cls):
+        "The identity element should be produced when __init__ is called with None as an argument."
+        return cls()
 
     def is_identity(self):
         raise NotImplementedError
