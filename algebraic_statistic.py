@@ -101,3 +101,9 @@ class Variance(AbstractGroupStatistic):
 
     def __eq__(self, other):
         return self.get_sum_square_distance() == other.get_sum_square_distance()
+
+    def __neg__(self):
+        new_variance = copy.deepcopy(self)
+        new_variance.sum_square_distance *= -1
+        new_variance.mean.n *= -1
+        return new_variance

@@ -80,7 +80,7 @@ class MeanTest(GroupStatisticTest):
         self.assertEqual(true_mean, m.get_mean())
         self.assertEqual(len(dataset), m.get_n())
 
-class VarianceTest(MonoidStatisticTest):
+class VarianceTest(GroupStatisticTest):
     STATISTIC_CLS = Variance
     def _generate_data_set(self, size):
         return [random.randint(-1000, 1000) for i in range(size)]
