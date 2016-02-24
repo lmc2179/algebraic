@@ -37,6 +37,13 @@ class AbstractGroupStatisticTest(unittest.TestCase):
         merged_algebraic_m_right = m1 | (m2 | m3)
         self._assert_equal(merged_algebraic_m_left, merged_algebraic_m_right)
 
+    def test_commutatativity(self):
+        d1, d2 = self._generate_data_sets([3, 4])
+        m1, m2 = self.STATISTIC_CLS(d1), self.STATISTIC_CLS(d2)
+        merged_algebraic_m1_left = m1 | m2
+        merged_algebraic_m1_right = m2 | m1
+        self._assert_equal(merged_algebraic_m1_left, merged_algebraic_m1_right)
+
     def test_identity(self):
         dataset = self._generate_data_set(7)
         m = self.STATISTIC_CLS(dataset) | self.STATISTIC_CLS.get_identity()
