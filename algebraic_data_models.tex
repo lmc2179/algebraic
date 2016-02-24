@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage{amsthm}
+\usepackage[margin=1.0in]{geometry}
+\begin{document}
+\newtheorem{mydef}{Definition}
+\title{Algebraic Data Models: Theory and Implementation}
+\maketitle
+\section{Introduction}
+This document is describes the theoretical underpinnings and system architecture of a Python project for machine learning using algebraic structures \cite{algebraic}. The project is built on the theoretical foundation established by Mike Izbicki in his work on \cite{algebraic classifiers}. The goal of the current project is to make efficient algebraic machine learning models available to Python users, similar to the way that Izbicki's library HLearn \cite{hlearn} makes them available to Haskell users.
+
+\section{Background: Algebraic Vocabulary}
+This section includes some basic definitions. Readers already familiar with the definitions of semigroups, monoids, and groups can safely skip this section.
+\begin{mydef}
+An algebraic structure is a set $S$ and a binary function $\diamond: S \times S \rightarrow S$.
+\end{mydef}
+\begin{mydef}
+A semigroup is an algebraic structure where $\diamond$ is associative.
+\end{mydef}
+\begin{mydef}
+A monoid is an algebraic structure which has an identity.
+\end{mydef}
+\begin{mydef}
+A group is an algebraic structure which has an inverse.
+\end{mydef}
+\section{The Theoretical Model}
+
+\section{The Design of the System}
+
+\begin{thebibliography}{9}
+
+\bibitem{algebraic}
+  https://github.com/lmc2179/algebraic
+  
+\bibitem{algebraic classifiers}
+  Michael Izbicki,
+  \emph{Algebraic Classifiers: a generic approach to fast cross-validation, online training, and parallel training},
+    International Conference on Machine Learning,
+  2013.
+
+\bibitem{hlearn}
+  Michael Izbicki,
+  \emph{HLearn: A Machine Learning Library for Haskell},
+  Trends in Functional Programming,
+  2013.
+
+
+
+\end{thebibliography}
+\end{document}
