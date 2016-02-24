@@ -2,7 +2,7 @@ import unittest
 from algebraic_statistic import Mean, Variance
 import random
 
-class AbstractAlgebraicStatisticTest(unittest.TestCase):
+class AbstractGroupStatisticTest(unittest.TestCase):
     STATISTIC_CLS = None
 
     def _generate_data_set(self, size):
@@ -30,7 +30,6 @@ class AbstractAlgebraicStatisticTest(unittest.TestCase):
         self.assertTrue(self.STATISTIC_CLS(d1) == self.STATISTIC_CLS(d1))
         self.assertFalse(self.STATISTIC_CLS(d1) == self.STATISTIC_CLS(d2))
 
-class SemigroupStatisticTest(AbstractAlgebraicStatisticTest):
     def test_associativity(self):
         d1, d2, d3 = self._generate_data_sets([3, 4, 5])
         m1, m2, m3 = self.STATISTIC_CLS(d1), self.STATISTIC_CLS(d2), self.STATISTIC_CLS(d3)
@@ -38,14 +37,12 @@ class SemigroupStatisticTest(AbstractAlgebraicStatisticTest):
         merged_algebraic_m_right = m1 | (m2 | m3)
         self._assert_equal(merged_algebraic_m_left, merged_algebraic_m_right)
 
-class MonoidStatisticTest(SemigroupStatisticTest):
     def test_identity(self):
         dataset = self._generate_data_set(7)
         m = self.STATISTIC_CLS(dataset) | self.STATISTIC_CLS.get_identity()
         m_gold = self.STATISTIC_CLS(dataset)
-        self.assertEqual(m, m_gold)
+        self._assert_equal(m, m_gold)
 
-class GroupStatisticTest(MonoidStatisticTest):
     def test_inverse(self):
         d1, d2 = self._generate_data_sets([3, 4])
         m1, m2 = self.STATISTIC_CLS(d1), self.STATISTIC_CLS(d2)
@@ -64,7 +61,7 @@ class GroupStatisticTest(MonoidStatisticTest):
         merged_algebraic_m = m1 | m2 - m2
         self._assert_equal(m1, merged_algebraic_m)
 
-class MeanTest(GroupStatisticTest):
+class MeanTest(AbstractGroupStatisticTest):
     STATISTIC_CLS = Mean
     def _generate_data_set(self, size):
         return [random.randint(-1000, 1000) for i in range(size)]
@@ -80,7 +77,7 @@ class MeanTest(GroupStatisticTest):
         self.assertEqual(true_mean, m.get_mean())
         self.assertEqual(len(dataset), m.get_n())
 
-class VarianceTest(GroupStatisticTest):
+class VarianceTest(AbstractGroupStatisticTest):
     STATISTIC_CLS = Variance
     def _generate_data_set(self, size):
         return [random.randint(-1000, 1000) for i in range(size)]

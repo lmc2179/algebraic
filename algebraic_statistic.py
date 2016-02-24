@@ -40,7 +40,7 @@ class AbstractProbabilityDistribution(object):
     def __neg__(self):
         pass # TODO: Er...which interface is this implementing?
 
-class AbstractAlgebraicStatistic(object):
+class AbstractGroupStatistic(object):
     def __init__(self, data=None):
         """
         The statistic should be calculated and saved to the object's state here.
@@ -53,7 +53,6 @@ class AbstractAlgebraicStatistic(object):
         """
         raise NotImplementedError
 
-class AbstractMonoidStatistic(AbstractAlgebraicStatistic):
     @classmethod
     def get_identity(cls):
         "The identity element should be produced when __init__ is called with None as an argument."
@@ -62,7 +61,6 @@ class AbstractMonoidStatistic(AbstractAlgebraicStatistic):
     def is_identity(self):
         raise NotImplementedError
 
-class AbstractGroupStatistic(AbstractMonoidStatistic):
     def __neg__(self):
         """
         Returns the inverse version of this element.
