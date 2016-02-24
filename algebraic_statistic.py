@@ -3,7 +3,42 @@ This module shows how the sample average can be formulated as an algebraic stati
 "merge" operation ("|") and an inverse.
 """
 
+import abc
 import copy
+
+class AbstractProbabilityDistribution(object):
+    """
+    This class describes the API for a probability distribution.
+
+    An estimate for a probability distribution is assumed to be constructed of one or more statistics.
+    The specification of these statistics defines the algebraic behavior of the distribution totally,
+    and subclasses should only need to implement that calculation of the probability measure from the statistics.
+
+    The use of composition here is designed to separate the business of calculating the statistic values
+    from that of calculating the probabilistic qualities of the distribution.
+    """
+    def __init__(self, data):
+        self.statistics = self._construct_statistics(data)
+
+    def _construct_statistics(self, data):
+        """
+        Subclasses should implement this method, returning a dictionary mapping statistic names to statistic objects.
+        """
+        raise NotImplementedError
+
+    def pdf(self, X):
+        """The PDF (or PMF) at the point X."""
+        raise NotImplementedError
+
+    def log_pdf(self, X):
+        """The log PDF (or PMF) at the point X."""
+        raise NotImplementedError
+
+    def __or__(self, other):
+        pass # TODO: Merge all statistics
+
+    def __neg__(self):
+        pass # TODO: Er...which interface is this implementing?
 
 class AbstractAlgebraicStatistic(object):
     def __init__(self, data=None):

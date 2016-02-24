@@ -2,16 +2,20 @@
 \usepackage{amsthm}
 \usepackage[margin=1.0in]{geometry}
 \begin{document}
-\newtheorem{mydef}{Definition}
+
+\theoremstyle{mydef}
+\newtheorem{mydef}{Definition}[section]
 \title{Algebraic Data Models: Theory and Implementation}
 \maketitle
 \section{Introduction}
-This document is describes the theoretical underpinnings and system architecture of a Python project for machine learning using algebraic structures \cite{algebraic}. The project is built on the theoretical foundation established by Mike Izbicki in his work on \cite{algebraic classifiers}. The goal of the current project is to make efficient algebraic machine learning models available to Python users, similar to the way that Izbicki's library HLearn \cite{hlearn} makes them available to Haskell users.
+This document is describes the mathematical structure and system architecture of a Python project for machine learning using algebraic structures \cite{algebraic}. The project is built on the theoretical foundation established by Mike Izbicki in his work on algebraic classifiers \cite{algebraic classifiers}. The goal of the current project is to make efficient algebraic machine learning models available to Python users, similar to the way that Izbicki's library HLearn \cite{hlearn} makes them available to Haskell users.
 
 \section{Background: Algebraic Vocabulary}
 This section includes some basic definitions. Readers already familiar with the definitions of semigroups, monoids, and groups can safely skip this section.
 \begin{mydef}
 An algebraic structure is a set $S$ and a binary function $\diamond: S \times S \rightarrow S$.
+
+We often refer to S as the "underlying set" of the structure.
 \end{mydef}
 \begin{mydef}
 A semigroup is an algebraic structure where $\diamond$ is associative.
@@ -22,7 +26,64 @@ A monoid is an algebraic structure which has an identity.
 \begin{mydef}
 A group is an algebraic structure which has an inverse.
 \end{mydef}
-\section{The Theoretical Model}
+\section{Models with Algebraic properties}
+
+When we learn from data, we create a model of the world. Often, this corresponds to choosing some mathematical model over our observations, and then estimating its parameters by calculating statistics from the data. 
+
+However, it is pointed out in \cite{algebraic classifiers} that models with algebraic structure (particularly models with the properties of groups) can be used to easily construct machine learning algorithms which are fast to cross-validate, and easy to parallelize. This section formalizes these models, in addition to providing useful examples of such models.
+
+\begin{mydef}
+An algebraic data model $\alpha$ is defined by the triple $(S, \diamond, f)$: 
+\begin{itemize}  
+    \item An algebraic structure $(S, \diamond)$
+    \item A function $f:D \rightarrow S$ which maps a dataset to the underlying set of the algebraic structure
+	\linebreak 	\linebreak    
+    Such that:
+    
+    \item For any two datasets $D_1$ and $D_2$, $f(D_1) \diamond f(D_2) = f(D_1 \cup D_2)$ 
+    
+\end{itemize}
+\end{mydef}
+
+This could reasonably be called an "algebraic statistic", or a "statistic with algebraic properties" - $f$ is the function which calculates the statistic from a data set. However, we will refer to this as an "algebraic data model" to avoid confusion with the existing field of algebraic statistics.
+
+At this point, we can present a familiar statistic - the sample mean - as an algebraic data model.
+
+\begin{mydef}
+The sample mean is an algebraic data model defined by the triple:
+\begin{itemize}
+	\item 
+\end{itemize}
+\end{mydef}
+
+In other words
+
+\begin{mydef}
+An algebraic density model is:
+\begin{itemize}  
+    \item A collection of algebraic data models
+    \item A PDF
+\end{itemize}
+\end{mydef}
+
+\begin{mydef}
+An algebraic classifier is:
+\begin{itemize}  
+    \item A collection of algebraic data models
+    \item A classification function
+\end{itemize}
+\end{mydef}
+
+
+\begin{mydef}
+A composite algebraic data model is: 
+\begin{itemize}  
+    \item A collection of algebraic data models
+    \item A collection of functions mapping the model states to some output space
+\end{itemize}
+\end{mydef}
+
+
 
 \section{The Design of the System}
 
