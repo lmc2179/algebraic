@@ -140,3 +140,30 @@ class Variance(AbstractGroupStatistic):
         new_variance.sum_square_distance *= -1
         new_variance.mean.n *= -1
         return new_variance
+
+class AbstractCompositeGroupStatistic(AbstractGroupStatistic):
+    STATISTIC_CLASSES = None
+    def __init__(self, data=None):
+        self.statistic_values = {name: cls(data) for name, cls in self.STATISTIC_CLASSES}
+
+    def __or__(self, other):
+        result = self.__class__()
+        names = self.statistic_values.keys()
+        statistic_values = {n: self.statistic_values[n] | other.statistic_values[n] for n in names}
+        result.statistic_values = statistic_values
+        return result
+
+    def __neg__(self):
+        result = self.__class__()
+        names = self.statistic_values.keys()
+        statistic_values = {n: -self.statistic_values[n] for n in names}
+        result.statistic_values = statistic_values
+        return result
+
+    def __eq__(self, other):
+        names = self.statistic_values.keys()
+        result = all([self.statistic_values[n] == other.statistic_values[n] for n in names])
+        return result
+
+class NormalEstimator(AbstractCompositeGroupStatistic):
+    STATISTIC_CLASSES = [('mean', Mean), ('variance', Variance)]
