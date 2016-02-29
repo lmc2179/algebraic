@@ -1,6 +1,7 @@
 import unittest
 from algebraic_statistic import Mean, Variance, NormalEstimator
 import random
+import numpy as np
 
 class AbstractGroupStatisticTest(unittest.TestCase):
     STATISTIC_CLS = None
@@ -102,6 +103,11 @@ class NormalEstimatorTest(AbstractGroupStatisticTest):
                                s2.statistic_values['variance'].get_variance(), places=6)
         self.assertAlmostEqual(s1.statistic_values['mean'].get_mean(),
                                s2.statistic_values['mean'].get_mean(), places=6)
+
+    def test_pdf(self):
+        D = np.random.normal(0, 1, 1000)
+        n = NormalEstimator(D)
+        print(n.pdf(0))
 
 if __name__ == '__main__':
     unittest.main()

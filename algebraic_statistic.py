@@ -5,6 +5,7 @@ This module shows how the sample average can be formulated as an algebraic stati
 
 import abc
 import copy
+import math
 
 class AbstractProbabilityDistribution(object):
     """
@@ -165,5 +166,45 @@ class AbstractCompositeGroupStatistic(AbstractGroupStatistic):
         result = all([self.statistic_values[n] == other.statistic_values[n] for n in names])
         return result
 
+    def __getitem__(self, key):
+        return self.statistic_values[key]
+
+class AbstractDensityModel(AbstractCompositeGroupStatistic):
+    def pdf(self, X):
+        raise NotImplementedError
+
+    def log_pdf(self, X):
+        raise NotImplementedError
+
 class NormalEstimator(AbstractCompositeGroupStatistic):
     STATISTIC_CLASSES = [('mean', Mean), ('variance', Variance)]
+
+    def pdf(self, X):
+        return self._calculate_normalizing_constant() * math.exp(self._mahalanobis_distance(X))
+
+    def _calculate_normalizing_constant(self):
+        var = self['variance'].get_variance()
+        return 1.0 / (math.sqrt(2 * math.pi * var))
+
+    def _mahalanobis_distance(self, X):
+        mu = self['mean'].get_mean()
+        var = self['variance'].get_variance()
+        return - ((X - mu)**2) / (2 * var)
+
+    def log_pdf(self, X):
+        return self._mahalanobis_distance(X)
+
+class PoissonEstimator(AbstractCompositeGroupStatistic):
+    pass
+
+class BinomialEstimator(AbstractCompositeGroupStatistic):
+    pass
+
+class ExponentialEstimator(AbstractCompositeGroupStatistic):
+    pass
+
+class vonMisesFisherEstimator(AbstractCompositeGroupStatistic):
+    pass
+
+class CategoricalEstimator(AbstractCompositeGroupStatistic):
+    pass
