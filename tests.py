@@ -1,7 +1,8 @@
 import unittest
-from algebraic_statistic import Mean, Variance, NormalEstimator
+from algebraic_statistic import Mean, Variance, NormalDistribution, PoissonDistribution
 import random
 import numpy as np
+import math
 
 class AbstractGroupStatisticTest(unittest.TestCase):
     STATISTIC_CLS = None
@@ -107,8 +108,8 @@ class VarianceTest(AbstractGroupStatisticTest):
     def _assert_equal(self, s1, s2):
         self.assertAlmostEqual(s1.get_variance(), s2.get_variance(), places=6)
 
-class NormalEstimatorTest(AbstractGroupStatisticTest):
-    STATISTIC_CLS = NormalEstimator
+class NormalDistributionTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = NormalDistribution
     def _generate_data_set(self, size):
         return [random.randint(-1000, 1000) for i in range(size)]
 
@@ -119,9 +120,30 @@ class NormalEstimatorTest(AbstractGroupStatisticTest):
                                s2.statistic_values['mean'].get_mean(), places=6)
 
     def test_pdf(self):
-        D = np.random.normal(0, 1, 1000)
-        n = NormalEstimator(D)
-        print(n.pdf(0))
+        TRUE_MU = 0
+        TRUE_VAR = 1
+        D = np.random.normal(TRUE_MU, TRUE_VAR, 50000)
+        n = NormalDistribution(D)
+        true_pdf = lambda x : 1.0 / (math.sqrt(2 * math.pi * TRUE_VAR)) * math.exp(- ((x - TRUE_MU)**2) / (2 * TRUE_VAR))
+        for i in range(-3,3):
+            self.assertAlmostEqual(true_pdf(i), n.pdf(i), places=2)
+
+class PoissonDistributionTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = PoissonDistribution
+    def _generate_data_set(self, size):
+        return [random.randint(0, 1000) for i in range(size)]
+
+    def _assert_equal(self, s1, s2):
+        self.assertAlmostEqual(s1.statistic_values['mean'].get_mean(),
+                               s2.statistic_values['mean'].get_mean(), places=6)
+
+    def test_pdf(self):
+        TRUE_LAMBDA = 1.2
+        D = np.random.poisson(lam=TRUE_LAMBDA, size=5000)
+        p = PoissonDistribution(D)
+        true_pmf = lambda k : (TRUE_LAMBDA**k * math.exp(-TRUE_LAMBDA)) / (math.factorial(k))
+        for i in range(0,10):
+            self.assertAlmostEqual(true_pmf(i), p.pdf(i), places=2)
 
 if __name__ == '__main__':
     unittest.main()

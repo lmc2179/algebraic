@@ -176,7 +176,7 @@ class AbstractDensityModel(AbstractCompositeGroupStatistic):
     def log_pdf(self, X):
         raise NotImplementedError
 
-class NormalEstimator(AbstractCompositeGroupStatistic):
+class NormalDistribution(AbstractCompositeGroupStatistic):
     STATISTIC_CLASSES = [('mean', Mean), ('variance', Variance)]
 
     def pdf(self, X):
@@ -194,7 +194,18 @@ class NormalEstimator(AbstractCompositeGroupStatistic):
     def log_pdf(self, X):
         return self._mahalanobis_distance(X)
 
-class PoissonEstimator(AbstractCompositeGroupStatistic):
+class PoissonDistribution(AbstractCompositeGroupStatistic):
+    STATISTIC_CLASSES = [('mean', Mean)]
+
+    def pdf(self, k):
+        lam = self['mean'].get_mean()
+        return (lam**k * math.exp(-lam)) / (math.factorial(k))
+
+    def log_pdf(self, k):
+        lam = self['mean'].get_mean()
+        return lam**k
+
+class BernoulliEstimator(AbstractCompositeGroupStatistic):
     pass
 
 class BinomialEstimator(AbstractCompositeGroupStatistic):
