@@ -93,10 +93,10 @@ class Mean(AbstractGroupStatistic):
         self.n = new_n
 
     def __or__(self, other):
-        if self == -other: # This handles the case where the element is merged with its inverse, but it's really silly
-            return Mean()
         merged_m = Mean()
         merged_n = self.get_n() + other.get_n()
+        if merged_n == 0: # Handle subtracting all elements
+            return Mean()
         merged_mean_val = 1.0/merged_n * (self.get_n() * self.get_mean() + other.get_n() * other.get_mean())
         merged_m.set_n(merged_n)
         merged_m.set_mean(merged_mean_val)
