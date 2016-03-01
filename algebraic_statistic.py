@@ -6,6 +6,7 @@ This module shows how the sample average can be formulated as an algebraic stati
 import abc
 import copy
 import math
+import numpy as np
 
 class AbstractProbabilityDistribution(object):
     """
@@ -191,7 +192,7 @@ class NormalDistribution(AbstractCompositeGroupStatistic):
         var = self['variance'].get_variance()
         return - ((X - mu)**2) / (2 * var)
 
-    def log_pdf(self, X):
+    def unnormalized_pdf(self, X):
         return self._mahalanobis_distance(X)
 
 class PoissonDistribution(AbstractCompositeGroupStatistic):
@@ -201,7 +202,7 @@ class PoissonDistribution(AbstractCompositeGroupStatistic):
         lam = self['mean'].get_mean()
         return (lam**k * math.exp(-lam)) / (math.factorial(k))
 
-    def log_pdf(self, k):
+    def unnormalized_pdf(self, k):
         lam = self['mean'].get_mean()
         return lam**k
 
@@ -217,5 +218,14 @@ class ExponentialEstimator(AbstractCompositeGroupStatistic):
 class vonMisesFisherEstimator(AbstractCompositeGroupStatistic):
     pass
 
-class CategoricalEstimator(AbstractCompositeGroupStatistic):
-    pass
+class CategoricalDistribution(AbstractCompositeGroupStatistic):
+    STATISTIC_CLASSES = [('mean', Mean)]
+
+    def pdf(self, x):
+        mean = self['mean'].get_mean()
+        return np.dot(x, mean)
+
+    def unnormalized_pdf(self, x):
+        # Technically this one is normalized
+        mean = self['mean'].get_mean()
+        return np.dot(x, mean)

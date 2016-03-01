@@ -1,5 +1,5 @@
 import unittest
-from algebraic_statistic import Mean, Variance, NormalDistribution, PoissonDistribution
+from algebraic_statistic import Mean, Variance, NormalDistribution, PoissonDistribution, CategoricalDistribution
 import random
 import numpy as np
 import math
@@ -144,6 +144,34 @@ class PoissonDistributionTest(AbstractGroupStatisticTest):
         true_pmf = lambda k : (TRUE_LAMBDA**k * math.exp(-TRUE_LAMBDA)) / (math.factorial(k))
         for i in range(0,10):
             self.assertAlmostEqual(true_pmf(i), p.pdf(i), places=2)
+
+class CategoricalDistributionTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = CategoricalDistribution
+    TEST_DATA_ITEM_LENGTH = 10
+    def _generate_data_set(self, size):
+        int_data = [random.randint(0, self.TEST_DATA_ITEM_LENGTH) for i in range(size)]
+        encoded_data = [self._label_encode(x, 10) for x in int_data]
+        return encoded_data
+
+    def _label_encode(self, x, max_val):
+        return np.array([1 if i == x else 0 for i in range(max_val)])
+
+    def _assert_equal(self, s1, s2):
+        m1, m2 = s1['mean'], s2['mean']
+        self.assertTrue(self._almost_equal(m1.get_mean(), m2.get_mean()))
+        self.assertEqual(m1.get_n(), m2.get_n())
+
+    def _almost_equal(self, v1, v2):
+        return np.all(np.isclose(v1, v2))
+
+    def test_pdf(self):
+        # PDF is uniform here
+        TRUE_CATEGORY_LIKELIHOOD = 1.0/ self.TEST_DATA_ITEM_LENGTH
+        D = self._generate_data_set(50000)
+        p = CategoricalDistribution(D)
+        for i in range(0,self.TEST_DATA_ITEM_LENGTH):
+            test_x = [1 if i == j else 0 for j in range(self.TEST_DATA_ITEM_LENGTH)]
+            self.assertAlmostEqual(p.pdf(test_x), TRUE_CATEGORY_LIKELIHOOD, places=1)
 
 if __name__ == '__main__':
     unittest.main()
