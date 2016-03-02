@@ -7,6 +7,7 @@ import abc
 import copy
 import math
 import numpy as np
+from scipy.misc import comb
 
 class AbstractProbabilityDistribution(object):
     """
@@ -171,13 +172,13 @@ class AbstractCompositeGroupStatistic(AbstractGroupStatistic):
         return self.statistic_values[key]
 
 class AbstractDensityModel(AbstractCompositeGroupStatistic):
-    def pdf(self, X):
+    def pdf(self, *args):
         raise NotImplementedError
 
-    def log_pdf(self, X):
+    def log_pdf(self, *args):
         raise NotImplementedError
 
-class NormalDistribution(AbstractCompositeGroupStatistic):
+class NormalDistribution(AbstractDensityModel):
     STATISTIC_CLASSES = [('mean', Mean), ('variance', Variance)]
 
     def pdf(self, X):
@@ -195,7 +196,7 @@ class NormalDistribution(AbstractCompositeGroupStatistic):
     def unnormalized_pdf(self, X):
         return self._mahalanobis_distance(X)
 
-class PoissonDistribution(AbstractCompositeGroupStatistic):
+class PoissonDistribution(AbstractDensityModel):
     STATISTIC_CLASSES = [('mean', Mean)]
 
     def pdf(self, k):
@@ -206,19 +207,41 @@ class PoissonDistribution(AbstractCompositeGroupStatistic):
         lam = self['mean'].get_mean()
         return lam**k
 
-class BernoulliEstimator(AbstractCompositeGroupStatistic):
+class BernoulliDistribution(AbstractDensityModel):
+    STATISTIC_CLASSES = [('mean', Mean)]
+
+    def pdf(self, x):
+        mu = self['mean'].get_mean()
+        return (mu ** x)*((1.0 - mu) ** (1 - x))
+
+    def unnormalized_pdf(self, x):
+        return self.pdf(x)
+
+class BinomialDistribution(AbstractDensityModel):
+    STATISTIC_CLASSES = [('mean', Mean)]
+
+    def pdf(self, n, k):
+        # n is the number of trials, k is the number of successes
+        mu = self['mean'].get_mean()
+        return comb(n, k) * (mu ** k) * ((1.0- mu) ** (n - k))
+
+    def unnormalized_pdf(self, n, k):
+        return self.pdf(n, k)
+
+class ExponentialDistribution(AbstractDensityModel):
+    STATISTIC_CLASSES = [('mean', Mean)]
+
+    def pdf(self, x):
+        lam = 1.0 / self['mean'].get_mean()
+        return lam * math.exp(-lam * x)
+
+    def unnormalized_pdf(self, x):
+        return self.pdf(x)
+
+class vonMisesFisherEstimator(AbstractDensityModel):
     pass
 
-class BinomialEstimator(AbstractCompositeGroupStatistic):
-    pass
-
-class ExponentialEstimator(AbstractCompositeGroupStatistic):
-    pass
-
-class vonMisesFisherEstimator(AbstractCompositeGroupStatistic):
-    pass
-
-class CategoricalDistribution(AbstractCompositeGroupStatistic):
+class CategoricalDistribution(AbstractDensityModel):
     STATISTIC_CLASSES = [('mean', Mean)]
 
     def pdf(self, x):

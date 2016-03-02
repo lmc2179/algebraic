@@ -1,5 +1,6 @@
 import unittest
-from algebraic_statistic import Mean, Variance, NormalDistribution, PoissonDistribution, CategoricalDistribution
+from algebraic_statistic import Mean, Variance, NormalDistribution, PoissonDistribution, CategoricalDistribution, \
+    BernoulliDistribution, ExponentialDistribution, BinomialDistribution
 import random
 import numpy as np
 import math
@@ -172,6 +173,57 @@ class CategoricalDistributionTest(AbstractGroupStatisticTest):
         for i in range(0,self.TEST_DATA_ITEM_LENGTH):
             test_x = [1 if i == j else 0 for j in range(self.TEST_DATA_ITEM_LENGTH)]
             self.assertAlmostEqual(p.pdf(test_x), TRUE_CATEGORY_LIKELIHOOD, places=1)
+
+class BernoulliDistributionTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = BernoulliDistribution
+    TEST_DATA_MU = 0.6
+    def _generate_data_set(self, size):
+        return [1 if random.random() < self.TEST_DATA_MU else 0 for i in range(size)]
+
+    def _assert_equal(self, s1, s2):
+        m1, m2 = s1['mean'], s2['mean']
+        self.assertAlmostEqual(m1.get_mean(), m2.get_mean())
+
+    def test_pdf(self):
+        # PDF is uniform here
+        D = self._generate_data_set(50000)
+        p = BernoulliDistribution(D)
+        self.assertAlmostEqual(p.pdf(0), 1.0 - self.TEST_DATA_MU, places=2)
+        self.assertAlmostEqual(p.pdf(1), self.TEST_DATA_MU, places=2)
+
+class ExponentialDistributionTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = ExponentialDistribution
+    def _generate_data_set(self, size):
+        return [random.randint(0, 1000) for i in range(size)]
+
+    def _assert_equal(self, s1, s2):
+        self.assertAlmostEqual(s1.statistic_values['mean'].get_mean(),
+                               s2.statistic_values['mean'].get_mean(), places=6)
+
+    def test_pdf(self):
+        TRUE_LAMBDA = 1.2
+        D = np.random.exponential(scale=1.0/TRUE_LAMBDA, size=50000)
+        p = ExponentialDistribution(D)
+        true_pmf = lambda x : TRUE_LAMBDA * math.exp(-TRUE_LAMBDA * x)
+        for i in range(0,10):
+            self.assertAlmostEqual(true_pmf(i), p.pdf(i), places=2)
+
+class BinomialDistributionTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = BernoulliDistribution
+    TEST_DATA_MU = 0.6
+    def _generate_data_set(self, size):
+        return [1 if random.random() < self.TEST_DATA_MU else 0 for i in range(size)]
+
+    def _assert_equal(self, s1, s2):
+        m1, m2 = s1['mean'], s2['mean']
+        self.assertAlmostEqual(m1.get_mean(), m2.get_mean())
+
+    def test_pdf(self):
+        # PDF is uniform here
+        D = self._generate_data_set(50000)
+        p = BinomialDistribution(D)
+        self.assertAlmostEqual(p.pdf(1, 0), 1.0 - self.TEST_DATA_MU, places=2)
+        self.assertAlmostEqual(p.pdf(1, 1), self.TEST_DATA_MU, places=2)
 
 if __name__ == '__main__':
     unittest.main()
