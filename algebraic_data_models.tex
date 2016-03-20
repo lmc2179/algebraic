@@ -21,37 +21,42 @@ We often refer to S as the "underlying set" of the structure.
 A semigroup is an algebraic structure where $\diamond$ is associative.
 \end{mydef}
 \begin{mydef}
-A monoid is an algebraic structure which has an identity.
+A monoid is a semigroup which has an identity.
 \end{mydef}
 \begin{mydef}
-A group is an algebraic structure which has an inverse.
+A group is a monoid which has an inverse element for each element in the underlying set.
 \end{mydef}
-\section{Models with Algebraic properties}
+\section{Models with Group structures}
 
-When we learn from data, we create a model of the world. Often, this corresponds to choosing some mathematical model over our observations, and then estimating its parameters by calculating statistics from the data. 
+When we learn from data, we create a model of the world. Often, this corresponds to choosing some parametric model over our observations, and then estimating its free parameters by calculating statistics from the data. 
 
-However, it is pointed out in \cite{algebraic classifiers} that models with algebraic structure (particularly models with the properties of groups) can be used to easily construct machine learning algorithms which are fast to cross-validate, and easy to parallelize. This section formalizes these models, in addition to providing useful examples of such models.
+However, it is pointed out in \cite{algebraic classifiers} that models with algebraic structure (particularly models with the properties of groups) can be used to easily construct machine learning algorithms which are fast to cross-validate, easy to parallelize, and naturally implement on-line behavior. This section formalizes these models, in addition to providing useful examples of such models.
+
+From our point of view, these models are just groups with some additional properties. We give the formal definition here:
 
 \begin{mydef}
-An algebraic data model $\alpha$ is defined by the triple $(S, \diamond, f)$: 
+A group data model $\alpha$ is defined by the triple $(S, \diamond, f)$: 
 \begin{itemize}  
-    \item An algebraic structure $(S, \diamond)$
-    \item A function $f:D \rightarrow S$ which maps a dataset to the underlying set of the algebraic structure
+    \item A group $(S, \diamond)$
+    \item A function $f:D \rightarrow S$ which maps a dataset to the underlying set of the group
 	\linebreak 	\linebreak    
     Such that:
     
     \item For any two datasets $D_1$ and $D_2$, $f(D_1) \diamond f(D_2) = f(D_1 \cup D_2)$ 
+    \item For any two datasets $D_1$ and $D_2$, $f(D_1) \diamond f(D_2)^{-1} = f(D_1 - D_2)$ 
     
 \end{itemize}
 \end{mydef}
 
 This could reasonably be called an "algebraic statistic", or a "statistic with algebraic properties" - $f$ is the function which calculates the statistic from a data set. However, we will refer to this as an "algebraic data model" to avoid confusion with the existing field of algebraic statistics.
 
-At this point, we can present a familiar statistic - the sample mean - as an algebraic data model.
+At this point, we can present a familiar statistic - the sample mean - as a model with a group structure
 
 \begin{mydef}
-The sample mean is an algebraic data model defined by the triple:
+The sample mean is a group data model defined by the following:
 \begin{itemize}
+	\item The underlying set S is the real numbers, $R$
+	\item The operation is defined by $S_1 \diamond S_2$
 	\item 
 \end{itemize}
 \end{mydef}

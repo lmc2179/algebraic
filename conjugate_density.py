@@ -1,6 +1,11 @@
 # HPDI spike
 import numpy as np
 from matplotlib import pyplot as plt
+from density_model import AbstractDensityModel
+
+
+class AbstractConjugateDensity(AbstractDensityModel):
+    pass
 
 def sliding_window_hpdi(samples, interval_fraction):
     window_size = int(1.0 * len(samples) * interval_fraction)

@@ -1,6 +1,7 @@
 import unittest
-from algebraic_statistic import Mean, Variance, NormalDistribution, PoissonDistribution, CategoricalDistribution, \
-    BernoulliDistribution, ExponentialDistribution, BinomialDistribution
+from algebraic_statistic import Mean, Variance
+from density_model import NormalDistribution, PoissonDistribution, BernoulliDistribution, BinomialDistribution, \
+    ExponentialDistribution, CategoricalDistribution
 import random
 import numpy as np
 import math
