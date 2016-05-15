@@ -2,9 +2,8 @@ import math
 
 import numpy as np
 from scipy.special import comb
-
+import von_mises_fisher
 from algebraic_statistic import Mean, Variance, AbstractCompositeGroupStatistic
-
 
 class AbstractDensityModel(AbstractCompositeGroupStatistic):
     def pdf(self, *args):
@@ -79,9 +78,17 @@ class ExponentialDistribution(AbstractDensityModel):
         return self.pdf(x)
 
 
-class vonMisesFisherEstimator(AbstractDensityModel):
-    pass
-
+# class vonMisesFisherDistribution(AbstractDensityModel):
+#     STATISTIC_CLASSES = [('mean', Mean)]
+#
+#     def pdf(self, x):
+#         lam = 1.0 / self['mean'].get_mean()
+#         return lam * math.exp(-lam * x)
+#
+#     def _calculate_kappa(self, ):
+#
+#     def unnormalized_pdf(self, x):
+#         return self.pdf(x)
 
 class CategoricalDistribution(AbstractDensityModel):
     STATISTIC_CLASSES = [('mean', Mean)]
@@ -94,3 +101,6 @@ class CategoricalDistribution(AbstractDensityModel):
         # Technically this one is normalized
         mean = self['mean'].get_mean()
         return np.dot(x, mean)
+
+class BetaDistribution(AbstractDensityModel):
+    pass

@@ -1,7 +1,7 @@
 import unittest
-from algebraic_statistic import Mean, Variance
+from algebraic_statistic import Mean, Variance, Frequency
 from density_model import NormalDistribution, PoissonDistribution, BernoulliDistribution, BinomialDistribution, \
-    ExponentialDistribution, CategoricalDistribution
+    ExponentialDistribution, CategoricalDistribution#, vonMisesFisherDistribution
 import random
 import numpy as np
 import math
@@ -82,6 +82,14 @@ class MeanTest(AbstractGroupStatisticTest):
         true_mean = 1.0 * sum(dataset) / len(dataset)
         self.assertEqual(true_mean, m.get_mean())
         self.assertEqual(len(dataset), m.get_n())
+
+class FrequencyTest(AbstractGroupStatisticTest):
+    STATISTIC_CLS = Frequency
+    def _generate_data_set(self, size):
+        return [random.randint(-1000, 1000) for i in range(size)]
+
+    def _assert_equal(self, s1, s2):
+        self.assertEqual(s1.get_counter(), s2.get_counter())
 
 class VectorMeanTest(AbstractGroupStatisticTest):
     STATISTIC_CLS = Mean
@@ -226,5 +234,15 @@ class BinomialDistributionTest(AbstractGroupStatisticTest):
         self.assertAlmostEqual(p.pdf(1, 0), 1.0 - self.TEST_DATA_MU, places=2)
         self.assertAlmostEqual(p.pdf(1, 1), self.TEST_DATA_MU, places=2)
 
-if __name__ == '__main__':
-    unittest.main()
+#
+# class vonMisesFisherDistributionTest(AbstractGroupStatisticTest):
+#     STATISTIC_CLS = vonMisesFisherDistribution
+#     def _generate_data_set(self, size):
+#         return [np.linalg.norm(np.array([random.random(), random.random()])) for i in range(size)]
+#
+#     def _assert_equal(self, s1, s2):
+#         m1, m2 = s1['mean'], s2['mean']
+#         self.assertAlmostEqual(m1.get_mean(), m2.get_mean())
+#
+# if __name__ == '__main__':
+#     unittest.main()
