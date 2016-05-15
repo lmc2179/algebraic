@@ -1,3 +1,4 @@
+from collections import Counter
 import copy
 
 class AbstractGroupStatistic(object):
@@ -69,6 +70,47 @@ class Mean(AbstractGroupStatistic):
         new_mean.set_mean(self.get_mean())
         new_mean.set_n(-self.get_n())
         return new_mean
+
+class Frequency(AbstractGroupStatistic):
+    """
+    Keeps track of the count of each object observed in the data so far. You can think of this as the
+    collections.Counter class endowed with the algebraic properties of a group.
+    """
+    def __init__(self, data=None):
+        if data is None:
+            self.counter = Counter()
+        else:
+            self.counter = Counter(data)
+
+    def get_counter(self):
+        return self.counter
+
+    def set_counter(self, new_counter):
+        self.counter = new_counter
+
+    def get_frequency(self, obj):
+        if obj in self.counter:
+            return self.counter[obj]
+        else:
+            return 0
+
+    def __or__(self, other):
+        self_ctr = self.get_counter()
+        other_ctr = other.get_counter()
+        unique_tokens = list(set(self_ctr.keys()) | set(other_ctr.keys()))
+        merged_counter_sums = ((k, self.get_frequency(k) + other.get_frequency(k)) for k in unique_tokens)
+        merged_counter = dict((k,v) for k,v in merged_counter_sums if v > 0)
+        result = Frequency()
+        result.set_counter(merged_counter)
+        return result
+
+    def __neg__(self):
+        neg_ctr = copy.deepcopy(self.get_counter())
+        for k in neg_ctr.keys():
+            neg_ctr[k] = -neg_ctr[k]
+        result = Frequency()
+        result.set_counter(neg_ctr)
+        return result
 
 class Variance(AbstractGroupStatistic):
     def __init__(self, data=None):
