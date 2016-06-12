@@ -1,11 +1,21 @@
-# HPDI spike
+"""
+This module allows the user to construct distributions over parameter values for
+"""
 import numpy as np
 from matplotlib import pyplot as plt
-from density_model import AbstractDensityModel
+from algebraic_statistic import AbstractCompositeGroupStatistic, Frequency
+from scipy.stats import beta
 
+class AbstractConjugateModel(AbstractCompositeGroupStatistic):
+    def get_posterior_pdf(self, *args, **kwargs):
+        raise NotImplementedError
 
-class AbstractConjugateDensity(AbstractDensityModel):
-    pass
+class Bernoulli(AbstractConjugateModel):
+    STATISTIC_CLASSES = [('Frequency', Frequency)]
+    def get_posterior_pdf(self, mu):
+        a = self.statistic_values['Frequency'].get_frequency(1) + 1
+        b = self.statistic_values['Frequency'].get_frequency(0) + 1
+        return beta.pdf(mu, a, b)
 
 def sliding_window_hpdi(samples, interval_fraction):
     window_size = int(1.0 * len(samples) * interval_fraction)
